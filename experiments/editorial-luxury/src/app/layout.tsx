@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Spectral, Inter } from "next/font/google";
+import { Bodoni_Moda, Lato } from "next/font/google";
 import "./globals.css";
 
-const spectral = Spectral({
-  variable: "--font-spectral",
+const bodoniModa = Bodoni_Moda({
+  variable: "--font-bodoni-moda",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const lato = Lato({
+  variable: "--font-lato",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["100", "300", "400", "700", "900"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${spectral.variable} ${inter.variable} font-sans antialiased`}
+        className={`${bodoniModa.variable} ${lato.variable} font-sans antialiased`}
         data-theme="light"
       >
         {children}

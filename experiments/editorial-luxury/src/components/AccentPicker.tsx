@@ -21,16 +21,57 @@ export default function AccentPicker() {
 
   useEffect(() => {
     const savedAccent = localStorage.getItem('accent-color');
-    if (savedAccent) {
-      const accent = accentColors.find(color => color.value === savedAccent) || accentColors[0];
-      setCurrentAccent(accent);
-      updateAccentColor(accent);
-    }
+    const accent = savedAccent 
+      ? accentColors.find(color => color.value === savedAccent) || accentColors[0]
+      : accentColors[0];
+    
+    setCurrentAccent(accent);
+    updateAccentColor(accent);
   }, []);
 
   const updateAccentColor = (accent: typeof accentColors[0]) => {
     document.documentElement.style.setProperty('--accent', accent.value);
     document.documentElement.setAttribute('data-accent', accent.type);
+    
+    // Check current theme
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    
+    // Update accent-content based on theme
+    if (isDark) {
+      document.documentElement.style.setProperty('--accent-content', '#0f172a');
+    } else {
+      document.documentElement.style.setProperty('--accent-content', '#ffffff');
+    }
+    
+    // Update adaptive grays based on accent type and theme
+    if (accent.type === 'warm') {
+      // Warm accents get cooler grays
+      if (isDark) {
+        document.documentElement.style.setProperty('--base-content-50', '#1c1917');
+        document.documentElement.style.setProperty('--base-content-60', '#94a3b8');
+        document.documentElement.style.setProperty('--base-content-70', '#cbd5e1');
+        document.documentElement.style.setProperty('--base-content-80', '#e2e8f0');
+      } else {
+        document.documentElement.style.setProperty('--base-content-50', '#f8fafc');
+        document.documentElement.style.setProperty('--base-content-60', '#94a3b8');
+        document.documentElement.style.setProperty('--base-content-70', '#64748b');
+        document.documentElement.style.setProperty('--base-content-80', '#475569');
+      }
+    } else {
+      // Cool accents get warmer grays  
+      if (isDark) {
+        document.documentElement.style.setProperty('--base-content-50', '#1c1917');
+        document.documentElement.style.setProperty('--base-content-60', '#94a3b8');
+        document.documentElement.style.setProperty('--base-content-70', '#cbd5e1');
+        document.documentElement.style.setProperty('--base-content-80', '#e2e8f0');
+      } else {
+        document.documentElement.style.setProperty('--base-content-50', '#fafaf9');
+        document.documentElement.style.setProperty('--base-content-60', '#a8a29e');
+        document.documentElement.style.setProperty('--base-content-70', '#78716c');
+        document.documentElement.style.setProperty('--base-content-80', '#57534e');
+      }
+    }
+    
     localStorage.setItem('accent-color', accent.value);
   };
 
@@ -44,7 +85,7 @@ export default function AccentPicker() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-10 h-10 rounded-full border border-base-300 flex items-center justify-center transition-all hover:scale-105"
+        className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-105"
         style={{ backgroundColor: currentAccent.value }}
         aria-label="Choose accent color"
       >
@@ -52,28 +93,37 @@ export default function AccentPicker() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-12 right-0 bg-base-100 border border-base-300 rounded-lg p-3 shadow-lg z-50 animate-fade-in">
-          <div className="grid grid-cols-5 gap-2 w-48">
-            {accentColors.map((accent) => (
-              <button
-                key={accent.name}
-                onClick={() => handleAccentChange(accent)}
-                className="w-8 h-8 rounded-full border border-base-300 hover:scale-110 transition-transform relative"
-                style={{ backgroundColor: accent.value }}
-                aria-label={`Set accent to ${accent.name}`}
-              >
-                {currentAccent.value === accent.value && (
-                  <div className="absolute inset-0 rounded-full border-2 border-white shadow-sm"></div>
-                )}
-              </button>
-            ))}
+        <>
+          {/* Invisible backdrop for click-outside */}
+          <div 
+            className="fixed inset-0 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Modal with blurred background */}
+          <div className="absolute top-12 right-0 bg-base-100/80 backdrop-blur-md rounded-lg p-4 shadow-lg z-50 animate-fade-in">
+            <div className="grid grid-cols-5 gap-2 w-48">
+              {accentColors.map((accent) => (
+                <button
+                  key={accent.name}
+                  onClick={() => handleAccentChange(accent)}
+                  className="w-8 h-8 rounded-full hover:scale-110 transition-transform relative"
+                  style={{ backgroundColor: accent.value }}
+                  aria-label={`Set accent to ${accent.name}`}
+                >
+                  {currentAccent.value === accent.value && (
+                    <div className="absolute inset-0 rounded-full border-2 border-white shadow-sm"></div>
+                  )}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 pt-3 border-t border-base-content/10">
+              <p className="text-xs text-base-content/60 text-center">
+                {currentAccent.name}
+              </p>
+            </div>
           </div>
-          <div className="mt-3 pt-3 border-t border-base-300">
-            <p className="text-xs text-base-content/60 text-center">
-              {currentAccent.name}
-            </p>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
