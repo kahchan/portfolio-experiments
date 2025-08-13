@@ -65,3 +65,8 @@ git push origin main
 - Show business impact and cross-functional collaboration
 - Target audience: Hiring managers, design leads, product managers at B2B/enterprise companies
 - Focus on scannable hierarchy for busy stakeholders
+
+## Git Workflow
+- Create new git branches for each portfolio experiment
+- Branch naming: `experiment-name-experiment` (e.g., `editorial-luxury-experiment`)
+- Work on experiments in separate branches to allow easy comparison and switching
